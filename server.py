@@ -29,27 +29,28 @@ Reward_calculator = RewardCalculator()
 packet_sending_rate_calculator = PacketSendingRateCalculator()
 
 def receive_file(file_name, arq_protocol, dqn_model, stop_event):
-    """Receive and process incoming file using ARQ protocol."""
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_socket.bind((SERVER_IP, SERVER_PORT))
     server_socket.settimeout(TIMEOUT)  # Set socket timeout
 
     seq_num = 0
 
+    logger.info("Server started on {}:{}".format(SERVER_IP, SERVER_PORT))
     logger.info("Server is waiting for data...")
 
     with open(file_name, 'wb') as file:
         while not stop_event.is_set():
             try:
+                logger.info("Waiting to receive data...")
                 data, client_address = server_socket.recvfrom(BUFFER_SIZE)
                 seq_num, packet_data = struct.unpack('B', data[:1])[0], data[1:]
+
+                logger.info("Received data from {}".format(client_address))
+                logger.info("Received packet {}".format(seq_num))
 
                 processed_data = arq_protocol.process_packet(seq_num, packet_data)
                 if processed_data is not None:
                     file.write(processed_data)
-
-                    # Log statement for successful packet reception
-                    logger.info(f"Received packet {seq_num}")
 
                 packet_sending_rate, rtt, packet_loss_rate, congestion_window_size, processing_time = compute_metrics()
 
@@ -68,9 +69,11 @@ def receive_file(file_name, arq_protocol, dqn_model, stop_event):
                                        processing_time_calculator.stop_timer()]).reshape(1, -1)
                 dqn_model.train(state, action, reward, next_state, done=False)
 
+                # Fine-tune the model
                 dqn_model.fine_tune(new_epsilon_decay=0.99, new_learning_rate=0.0005)
 
             except socket.timeout:
+                logger.error("Timeout: No data received within the specified timeout.")
                 handle_timeout(seq_num)
                 pass
 

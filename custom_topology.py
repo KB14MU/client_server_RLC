@@ -8,8 +8,8 @@ from mininet.cli import CLI
 class myTopology(Topo):
     def build(self):
         # Add hosts and switches
-        server = self.addHost('server', ip='10.0.0.1')
-        client = self.addHost('client', ip='10.0.0.2')
+        server = self.addHost('server', ip='127.0.0.1')
+        client = self.addHost('client', ip='127.0.0.2')
         switch = self.addSwitch('s1')
 
         # Add links with bandwidth, delay, and loss parameters
