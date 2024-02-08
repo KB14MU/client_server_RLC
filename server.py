@@ -13,7 +13,7 @@ from rtt_calculator import RTTCalculator
 from congestion_window_controller import CongestionWindowSizeController
 from reward_calculator import RewardCalculator
 
-SERVER_IP = "0.0.0.0"
+SERVER_IP = "10.0.0.1"
 SERVER_PORT = 12345
 BUFFER_SIZE = 1024
 PACKET_SIZE = 1020
