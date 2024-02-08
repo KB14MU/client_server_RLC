@@ -58,10 +58,10 @@ def send_file(file_name, dqn_model):
 
                 state = np.array([packet_sending_rate, rtt, packet_loss_rate, congestion_window_size, processing_time]).reshape(1, -1)
                 action = dqn_model.act(state)
-                reward = compute_reward()
+                reward = Reward_calculator.compute_reward(packet_loss_rate, rtt, congestion_window_size, processing_time)
                 next_state = np.array([packet_sending_rate_calculator.compute_packet_sending_rate(), RTTCalculator.compute_rtt(),
                                        packet_loss_calculator.compute_packet_loss_rate(), congestion_window_controller.get_window_size(),
-                                       processing_time_calculator.compute_processing_time()]).reshape(1, -1)
+                                       processing_time_calculator.stop_timer()]).reshape(1, -1)
                 dqn_model.train(state, action, reward, next_state, done=False)
 
                 dqn_model.fine_tune(new_epsilon_decay=0.99, new_learning_rate=0.0005)
