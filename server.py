@@ -14,7 +14,7 @@ from rtt_calculator import RTTCalculator
 from congestion_window_controller import CongestionWindowSizeController
 from reward_calculator import RewardCalculator
 
-SERVER_IP = "0.0.0.0"
+SERVER_IP = "10.0.0.1"
 SERVER_PORT = 12345
 BUFFER_SIZE = 1024
 PACKET_SIZE = 1020
@@ -61,8 +61,8 @@ def receive_file(file_name, arq_protocol, dqn_model, stop_event):
                 next_state = np.array([packet_sending_rate_calculator.compute_packet_sending_rate(),
                                        RTTCalculator.compute_rtt(),
                                        packet_loss_calculator.compute_packet_loss_rate(),
-                                       congestion_window_controller.compute_congestion_window_size(),
-                                       processing_time_calculator.compute_processing_time()]).reshape(1, -1)
+                                       congestion_window_controller.get_window_size(),
+                                       processing_time_calculator.stop_timer()]).reshape(1, -1)
                 dqn_model.train(state, action, reward, next_state, done=False)
 
                 dqn_model.fine_tune(new_epsilon_decay=0.99, new_learning_rate=0.0005)
@@ -76,9 +76,9 @@ def receive_file(file_name, arq_protocol, dqn_model, stop_event):
 def compute_metrics():
     packet_sending_rate = packet_sending_rate_calculator.compute_packet_sending_rate()
     rtt = RTTCalculator.compute_rtt()
-    packet_loss_rate = packet_loss_calculator.calculate_packet_loss_rate()
-    congestion_window_size = congestion_window_controller.get_congestion_window_size()
-    processing_time = processing_time_calculator.compute_processing_time()
+    packet_loss_rate = packet_loss_calculator.compute_packet_loss_rate()
+    congestion_window_size = congestion_window_controller.get_window_size()
+    processing_time = processing_time_calculator.stop_timer()
 
     return packet_sending_rate, rtt, packet_loss_rate, congestion_window_size, processing_time
 
