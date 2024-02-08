@@ -19,7 +19,9 @@ cd ..
 mininet/util/install.sh [options]
 
 a: install everything that is included in the Mininet VM, including dependencies like Open vSwitch as well the additions like the OpenFlow wireshark dissector and POX. By default these tools will be built in directories created in your home directory.
+
 nfv: install Mininet, the OpenFlow reference switch, and Open vSwitch
+
 s mydir: use this option before other options to place source/build trees in a specified directory rather than in your home directory.
 
 # Build an environment venv
