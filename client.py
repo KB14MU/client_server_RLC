@@ -1,9 +1,10 @@
 import socket
 import os
-import time
-import struct
-from threading import Thread
 import numpy as np
+import struct
+import time
+from threading import Thread, Event
+from arq import ARQProtocol
 from reinforcement_learning import DQNReinforcementLearning
 from custom_logging import logger
 from packet_loss_rate_calculator import PacketLossRateCalculator
@@ -35,11 +36,12 @@ def compute_metrics():
     return packet_sending_rate, rtt, packet_loss_rate, congestion_window_size, processing_time
 
 def compute_reward():
-    packet_loss_rate, rtt, congestion_window_size, processing_time = compute_metrics()
+    packet_sending_rate, rtt, packet_loss_rate, congestion_window_size, processing_time = compute_metrics()
     return Reward_calculator.compute_reward(packet_loss_rate, rtt, congestion_window_size, processing_time)
 
 def send_file(file_name, dqn_model):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    client_socket.settimeout(5)  # Set a 5-second timeout
 
     logger.info(f"Client started sending to {SERVER_IP}")
 
@@ -52,13 +54,24 @@ def send_file(file_name, dqn_model):
                     break
 
                 packet = struct.pack('B', seq_num % 256) + data
+
+                # Log statement before sending packet
+                logger.info(f"About to send packet {seq_num}")
+
                 client_socket.sendto(packet, (SERVER_IP, SERVER_PORT))
 
-                packet_sending_rate, rtt, packet_loss_rate, congestion_window_size, processing_time = compute_metrics()
+                # Log statement after sending packet
+                logger.info(f"Packet {seq_num} sent successfully")
+
+                try:
+                    packet_sending_rate, rtt, packet_loss_rate, congestion_window_size, processing_time = compute_metrics()
+                except socket.timeout:
+                    handle_timeout(seq_num)
+                    continue
 
                 state = np.array([packet_sending_rate, rtt, packet_loss_rate, congestion_window_size, processing_time]).reshape(1, -1)
                 action = dqn_model.act(state)
-                reward = Reward_calculator.compute_reward(packet_loss_rate, rtt, congestion_window_size, processing_time)
+                reward = compute_reward()
                 next_state = np.array([packet_sending_rate_calculator.compute_packet_sending_rate(), RTTCalculator.compute_rtt(),
                                        packet_loss_calculator.compute_packet_loss_rate(), congestion_window_controller.get_window_size(),
                                        processing_time_calculator.stop_timer()]).reshape(1, -1)
@@ -71,6 +84,8 @@ def send_file(file_name, dqn_model):
 
     except FileNotFoundError:
         logger.error(f"File not found: {file_name}")
+    except socket.error as se:
+        logger.error(f"Socket error: {str(se)}")
     except Exception as e:
         logger.error(f"Error sending file: {str(e)}")
     finally:
@@ -79,6 +94,7 @@ def send_file(file_name, dqn_model):
 def start_client(file_name, dqn_model):
     client_thread = Thread(target=send_file, args=(file_name, dqn_model))
     client_thread.start()
+    client_thread.join()  # Wait for the thread to finish
     logger.info(f"Client started sending to {SERVER_IP}:{SERVER_PORT}")
 
 if __name__ == "__main__":

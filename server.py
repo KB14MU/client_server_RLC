@@ -19,7 +19,7 @@ SERVER_PORT = 12345
 BUFFER_SIZE = 1024
 PACKET_SIZE = 1020
 MAX_SEQ_NUM = 255
-TIMEOUT = 5
+TIMEOUT = 10
 
 packet_loss_calculator = PacketLossRateCalculator()
 congestion_window_controller = CongestionWindowSizeController()
@@ -47,6 +47,9 @@ def receive_file(file_name, arq_protocol, dqn_model, stop_event):
                 processed_data = arq_protocol.process_packet(seq_num, packet_data)
                 if processed_data is not None:
                     file.write(processed_data)
+
+                    # Log statement for successful packet reception
+                    logger.info(f"Received packet {seq_num}")
 
                 packet_sending_rate, rtt, packet_loss_rate, congestion_window_size, processing_time = compute_metrics()
 
