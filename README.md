@@ -9,8 +9,11 @@
 
 # Install Mininet inside linux environment or VM
 cd mininet
+
 git tag  # list available versions
-git checkout -b mininet-2.3.0 2.3.0  # or whatever version you wish to install
+
+git checkout -b mininet-2.3.0 2.3.0   # or whatever version you wish to install
+
 cd ..
 
 mininet/util/install.sh [options]
@@ -20,31 +23,45 @@ mininet/util/install.sh [options]
 # s mydir: use this option before other options to place source/build trees in a specified directory rather than in your home directory.
 
 # Build an environment venv
+
 apt install python3.10-venv
+
 python3.10 -m venv mininet_env
+
 source mininet_env/bin/activate
 
 # Install dependencies
+
 pip install -r requirements.txt
 
 
 # run the custom topology built for mininet that uses our server and client app
+
 chmod +x mininet_env.sh
+
 ./mininet_env.sh
 
 
 # Verify Connectivity:
 # Use Mininet's pingall command to check the connectivity between different hosts in your topology.
+
 pingall
 
 # Open terminals for client and server using xterm and run your custom server and client scripts.
+
 mininet> xterm client server
 
 # make sure the venv are activated
+
 source mininet_env/bin/activate
+
 server python3 /home/khalid/Documents/mininet-scripts/server.py
+
 client python3 /home/khalid/Documents/mininet-scripts/client.py
+
 or
+
 In client xterm: python client.py
+
 In server xterm: python server.py
 
