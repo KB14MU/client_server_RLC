@@ -1,11 +1,11 @@
-#This application is intended to emulate a client server topology in a mininet environment.
-#it use UDP transport protocol and ARQ for reliebility.
-#it include a reinforcement learning model done using tensorflow to build Deep Q-Network (DQN) algorithm.
-#also some metrics and impairments was introduces as part of the emulation and to calculate the reward so the system can learn.
-#The naming convention i used here are strat forward as you can understand what is the function of each script by just reading it.
-#please note that the code still need some improvement to match a real transmision senario
+# This application is intended to emulate a client server topology in a mininet environment.
+# it use UDP transport protocol and ARQ for reliebility.
+# it include a reinforcement learning model done using tensorflow to build Deep Q-Network (DQN) algorithm.
+# also some metrics and impairments was introduces as part of the emulation and to calculate the reward so the system can learn.
+# The naming convention i used here are strat forward as you can understand what is the function of each script by just reading it.
+# please note that the code still need some improvement to match a real transmision senario
 
-#lets start by runing the scripts:
+# lets start by runing the scripts:
 
 # Install Mininet inside linux environment or VM
 cd mininet
@@ -24,7 +24,7 @@ apt install python3.10-venv
 python3.10 -m venv mininet_env
 source mininet_env/bin/activate
 
-#Install dependencies
+# Install dependencies
 pip install -r requirements.txt
 
 
@@ -45,6 +45,6 @@ source mininet_env/bin/activate
 server python3 /home/khalid/Documents/mininet-scripts/server.py
 client python3 /home/khalid/Documents/mininet-scripts/client.py
 or
-# In client xterm: python client.py
-# In server xterm: python server.py
+In client xterm: python client.py
+In server xterm: python server.py
 
