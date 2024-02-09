@@ -13,9 +13,11 @@ git clone https://github.com/mininet/mininet
 
 cd mininet
 
-git tag  #### list available versions
+#### List available versions
+git tag  
 
-git checkout -b mininet-2.3.0 2.3.0   #### or whatever version you wish to install
+#### Select whatever version you wish to install
+git checkout -b mininet-2.3.0 2.3.0   
 
 cd ..
 
