@@ -1,8 +1,8 @@
 ### This application is intended to emulate a client server topology in a mininet environment.
-### It use UDP transport protocol and ARQ acknowledgements for reliebility.
-### It include a reinforcement learning model done using tensorflow to build Deep Q-Network (DQN) algorithm.
+### It uses UDP transport protocol and ARQ acknowledgements for reliebility.
+### It includes a reinforcement learning model done using tensorflow to build Deep Q-Network (DQN) algorithm.
 ### Also some metrics and impairments was introduces as part of the emulation and to calculate the reward so the system can learn.
-### The naming convention i used here are strat forward as you can understand what is the function of each script by just reading it.
+### The naming convention i used here are straight forward as you can understand what is the function of each script by just reading it.
 ### Please note that the code still need some improvement to match a real transmision senario
 
 ### Lets start by runing the scripts:
